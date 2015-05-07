@@ -17,6 +17,7 @@ const GTGSearchProvider = new Lang.Class({
 
 	_init: function(name)
 	{
+        this._proxy = new GTGDBus.GTGProxy(Gio.DBus.system, 'org.gnome.GTG', '/org/gnome/GTG', name);
 		running = false;
 
 		// Create tasks list
@@ -24,15 +25,16 @@ const GTGSearchProvider = new Lang.Class({
 		loadTasks();
 
 		// Signals
-		this.addedSignal = GTGDBus.GTGProxy.connect('TaskAdded',
+		this.addedSignal = this._proxy.connectSignal('TaskAdded',
 			function(sender, tid) { loadTasks(); });
-		this.modifiedSignal = GTGDBus.GTGProxy.connect('TaskModified',
+		this.modifiedSignal = this._proxy.connectSignal('TaskModified',
 			function(sender, tid) { loadTasks(); });
-    		this.deletedTask = GTGDBus.GTGProxy.connect('TaskDeleted',
-    			function(sender, tid) { loadTasks(); });
+		this.deletedTask = this._proxy.connectSignal('TaskDeleted',
+			function(sender, tid) { loadTasks(); });
 
 		// Watch GTG state
-		GTGDBus.DBus.session.watch_name("org.gnome.GTG", false,
+		//GTGDBus.DBus.session.watch_name("org.gnome.GTG", false,
+		Gio.DBus.session.watch_name("org.gnome.GTG", Gio.BusNameWatcherFlags.NONE,
 			function() { running=true; loadTasks(); },
 			function() { running=false; loadTasks(); });
 		return true;
@@ -88,9 +90,9 @@ const GTGSearchProvider = new Lang.Class({
 
 	destroy: function()
 	{
-		GTGDBus.GTGProxy.disconnect(this.addedSignal);
-		GTGDBus.GTGProxy.disconnect(this.modifiedSignal);
-		GTGDBus.GTGProxy.disconnect(this.deletedTask);
+		this._proxy.disconnect(this.addedSignal);
+		this._proxy.disconnect(this.modifiedSignal);
+		this._proxy.disconnect(this.deletedTask);
 	}
 });
 
