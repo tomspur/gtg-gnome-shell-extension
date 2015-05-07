@@ -1,5 +1,4 @@
 const Mainloop = imports.mainloop;
-const Search = imports.ui.search;
 const Lang = imports.lang;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Extension = ExtensionUtils.getCurrentExtension();
@@ -15,17 +14,15 @@ let running;		// bool : GTG is running
 
 const GTGSearchProvider = new Lang.Class({
 	Name: 'GTGSearchProvider',
-	Extends: Search.SearchProvider,
 
 	_init: function(name)
 	{
-		Search.SearchProvider.prototype._init.call(this, SP_NAME);
 		running = false;
-		
+
 		// Create tasks list
 		allTasks = new Array();
 		loadTasks();
-		
+
 		// Signals
 		this.addedSignal = GTGDBus.GTGProxy.connect('TaskAdded',
 			function(sender, tid) { loadTasks(); });
@@ -33,7 +30,7 @@ const GTGSearchProvider = new Lang.Class({
 			function(sender, tid) { loadTasks(); });
     		this.deletedTask = GTGDBus.GTGProxy.connect('TaskDeleted',
     			function(sender, tid) { loadTasks(); });
-		
+
 		// Watch GTG state
 		GTGDBus.DBus.session.watch_name("org.gnome.GTG", false,
 			function() { running=true; loadTasks(); },
@@ -65,14 +62,14 @@ const GTGSearchProvider = new Lang.Class({
 	{
 		var sTerms = terms.toString().replace(',','');
 		var pattern = new RegExp(sTerms,"gi");
-	
+
 		var results = new Array();
 		for (var i in allTasks)
 		{
 			// Search in title and text
 			var s = allTasks[i].title + " " + allTasks[i].text;
 			s = s.replace('<content>','').replace('</content>','').replace(/\s/g,'');
-		
+
 			if (s.match(pattern))
 			{
 				var result = [allTasks[i].id, allTasks[i].title];
@@ -88,7 +85,7 @@ const GTGSearchProvider = new Lang.Class({
 		//return this.getInitialResultSet(terms);
 		return this.getInitialResultSet(terms);
 	},
-	
+
 	destroy: function()
 	{
 		GTGDBus.GTGProxy.disconnect(this.addedSignal);
@@ -99,7 +96,7 @@ const GTGSearchProvider = new Lang.Class({
 
 // load all the tasks in "allTasks"
 function loadTasks()
-{	
+{
 	// If gtg is running
 	if (running)
 	{
