@@ -13,17 +13,17 @@ var GTGTMInstance = null;
 
 function init(meta) {}
 
-function enable() 
+function enable()
 {
 	global.log("GTG extension enabled.");
 	// Create the search provider
 	if (GTGSPInstance==null)
 	{
 		GTGSPInstance = new GTGSearchProvider.GTGSearchProvider();
-		Main.overview.addSearchProvider(GTGSPInstance);
-		
+		Main.overview.viewSelector._searchResults._registerProvider(GTGSPInstance);
+
 		GTGCMInstance = new GTGCalendarMenu.GTGCalendarMenu();
-		
+
 		GTGTMInstance = new GTGTodoMenu.GTGTodoMenu();
 	}
 }
@@ -34,13 +34,13 @@ function disable()
 	// Destroy the search provider
 	if (GTGSPInstance!=null)
 	{
-		Main.overview.removeSearchProvider(GTGSPInstance);
+		Main.overview.viewSelector._searchResults._unregisterProvider(GTGSPInstance);
 		GTGSPInstance.destroy();
 		GTGSPInstance = null;
-		
+
 		GTGCMInstance.destroy();
 		GTGCMInstance = null;
-		
+
 		GTGTMInstance.destroy();
 		GTGTMInstance = null;
 	}
