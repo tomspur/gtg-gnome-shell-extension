@@ -1,26 +1,32 @@
-const DBus = imports.dbus; // imports DBus
+const Gio = imports.gi.Gio;
 
 // Interface
-const GTGIFace = 
-{
-    name: 'org.gnome.GTG',
-    methods: 
-    [
-    	{ name: 'GetActiveTasks', inSignature: 'as', outSIgnature: 'aa{sv}' },
-	{ name: 'OpenTaskEditor', inSignature: 's', outSignature: '' },
-	{ name: 'ShowTaskBrowser', inSignature: '', outSignature: ''}
-    ],
-    signals:
-    [
-    	{ name: 'TaskAdded', inSignature: 's'},
-	{ name: 'TaskModified', inSignature: 's'},
-        { name: 'TaskDeleted', inSignature: 's'}
-    ]
-};
+const GTGIFace = '<node> \
+<interface name="org.gnome.GTG"> \
+<method name="GetActiveTasks"> \
+    <arg type="as" direction="out" /> \
+    <arg type="aa{sv}" direction="out" /> \
+</method> \
+<method name="OpenTaskEditor"> \
+    <arg type="s" direction="out" /> \
+</method> \
+<method name="ShowTaskBrowser"> \
+</method> \
+<signal name="TaskAdded"> \
+    <arg type="s" direction="out" /> \
+</signal> \
+<signal name="TaskModified"> \
+    <arg type="s" direction="out" /> \
+</signal> \
+<signal name="TaskDeleted"> \
+    <arg type="s" direction="out" /> \
+</signal> \
+</interface> \
+</node>';
+
 
 // Proxy
-const GTGDbus = DBus.makeProxyClass(GTGIFace);
-const GTGProxy = new GTGDbus(DBus.session, 'org.gnome.GTG', '/org/gnome/GTG');
+const GTGProxy = Gio.DBusProxy.makeProxyWrapper(GTGIFace);
 
 //
 // Functions
