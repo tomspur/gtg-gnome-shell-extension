@@ -29,18 +29,18 @@ function buildPrefsWidget()
 		margin_top: 10,
 		margin: 20
 	});
-	
+
 	// Create settings
 	var hbox;
-	for (setting in settings)
+	for (var setting in settings)
 	{
 		if (settings[setting].type == 'b')
 			hbox = createBoolSetting(settings[setting]);
 		else if (settings[setting].type == 'i')
 			hbox = createIntSetting(settings[setting]);
 		mainBox.add(hbox);
-	}	
-	
+	}
+
 	// Display settings
 	mainBox.show_all();
 	return mainBox;
